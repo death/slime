@@ -620,8 +620,7 @@ If `slime-repl-suppress-prompt' is true, does nothing and returns nil."
                  (get-buffer-window (current-buffer) t))))
       (when win
         (with-selected-window win
-          (set-window-point win (point-max))
-          (recenter -1))))))
+          (set-window-point win (point-max)))))))
 
 (defvar slime-repl-current-input-hooks)
 
