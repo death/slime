@@ -103,8 +103,11 @@ that the character is not escaped."
               ((slime-compare-char-syntax #'char-before "(" t)
                ;; We're directly after an opening parenthesis, so we
                ;; have to make sure that something comes before
-               ;; %CURSOR-MARKER%.
-               (push "" suffix))
+               ;; %CURSOR-MARKER%.  Preferably the symbol after point.
+               (let ((pt-before (point)))
+                 (slime-end-of-symbol)
+                 (when (= pt-before (point))
+                   (push "" suffix))))
               (t
                ;; We're at a symbol, so make sure we get the whole symbol.
                (slime-end-of-symbol)))
