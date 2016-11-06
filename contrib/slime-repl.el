@@ -1373,7 +1373,8 @@ expansion will be added to the REPL's history.)"
               (string-match "^\\*inferior-lisp*" (buffer-name buf))
               (string-match "^\\*slime-repl .*\\*$" (buffer-name buf))
               (string-match "^\\*sldb .*\\*$" (buffer-name buf))
-              (string-match "^\\*SLIME.*\\*$" (buffer-name buf)))
+              (and (string-match "^\\*SLIME.*\\*$" (buffer-name buf))
+                   (not (equal (buffer-name buf) (slime-buffer-name :scratch)))))
       (kill-buffer buf))))
 
 (defslime-repl-shortcut slime-repl-shortcut-help ("help")
