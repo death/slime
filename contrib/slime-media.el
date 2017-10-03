@@ -10,12 +10,16 @@
   (:on-load
    (add-hook 'slime-event-hooks 'slime-dispatch-media-event)))
 
-(defun slime-media-decode-image (image)
+(defun slime-media-decode-image (specs)
   (mapcar (lambda (image)
-	    (if (plist-get image :data)
-		(plist-put image :data (base64-decode-string (plist-get image :data)))
-	      image))
-	  image))
+            (let ((data (plist-get image :data)))
+              (when data
+                (setq image (plist-put image :data (base64-decode-string data)))))
+            (let ((type (plist-get image :type)))
+              (when (stringp type)
+                (setq image (plist-put image :type (intern type)))))
+	    image)
+	  specs))
 
 (defun slime-dispatch-media-event (event)
   (slime-dcase event

@@ -22,4 +22,22 @@
 ;; object system, methods are ordinary functions with a special naming
 ;; convention)
 
+;; Whatever, dude...
+
+(defun insert-image (&key file data type string)
+  (send-to-emacs (list :write-image
+                       (cond (file
+                              ;; This should really be
+                              ;; native-namestring.
+                              (namestring file))
+                             ((and (stringp data) type)
+                              ;; Data is assumed to base64-encoded;
+                              ;; type must be provided.
+                              (list (list :data data :type (string-downcase type))))
+                             (t
+                              (error "Can't build :write-image event.")))
+                       (or string " "))))
+
+(export 'insert-image)
+
 (provide :swank-media)
