@@ -162,6 +162,7 @@
            #:*default-worker-thread-bindings*
            #:*macroexpand-printer-bindings*
            #:*swank-pprint-bindings*
+           #:*indicate-no-values*
            #:*record-repl-results*
            #:*inspector-verbose*
            ;; This is SETFable.
