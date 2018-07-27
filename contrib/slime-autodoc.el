@@ -58,7 +58,9 @@
 (defun slime-autodoc-space (n)
   "Like `slime-space' but nicer."
   (interactive "p")
-  (self-insert-command n)
+  (if view-mode
+      (View-scroll-page-forward)
+    (self-insert-command n))
   (let ((doc (slime-autodoc)))
     (when doc
       (eldoc-message doc))))
