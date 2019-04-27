@@ -5,7 +5,8 @@
 
 (defpackage swank-repl
   (:use cl swank/backend)
-  (:export *send-repl-results-function*)
+  (:export *send-repl-results-function*
+           *repl-pprint-dispatch*)
   (:import-from
    swank
 
@@ -241,6 +242,10 @@ LISTENER-EVAL directly, so that spacial variables *, etc are set."
 
 (defvar *send-repl-results-function* 'send-repl-results-to-emacs)
 
+(defvar *repl-pprint-dispatch* nil
+  "Can be set to a pprint-dispatch table that will only affect the
+printing of REPL results.")
+
 (defun repl-eval (string)
   (clear-user-input)
   (with-buffer-syntax ()
@@ -251,7 +256,10 @@ LISTENER-EVAL directly, so that spacial variables *, etc are set."
            (setq *** **  ** *  * (car values)
                  /// //  // /  / values
                  +++ ++  ++ +  + last-form)
-           (funcall *send-repl-results-function* values))))))
+           (let ((*print-pprint-dispatch*
+                   (or *repl-pprint-dispatch*
+                       *print-pprint-dispatch*)))
+             (funcall *send-repl-results-function* values)))))))
   nil)
 
 (defun track-package (fun)
