@@ -6750,6 +6750,8 @@ The `*' variable will be bound to the inspected object."
      (slime-rcurry
       (lambda (chunk prev)
         (let ((inhibit-read-only t))
+          (when (null (get-text-property (point) 'slime-range-button))
+            (backward-char))
           (apply #'delete-region (slime-property-bounds 'slime-range-button))
           (slime-inspector-insert-chunk chunk prev (not prev))))
       prev))))
