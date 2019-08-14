@@ -281,14 +281,14 @@ current buffer."
 ;;; Complete form
 
 (defun slime-complete-form ()
-  "Complete the form at point.  
+  "Complete the form at point.
 This is a superset of the functionality of `slime-insert-arglist'."
   (interactive)
   ;; Find the (possibly incomplete) form around point.
   (let ((buffer-form (slime-parse-form-upto-point)))
     (let ((result (slime-eval `(swank:complete-form ',buffer-form))))
       (if (eq result :not-available)
-          (error "Could not generate completion for the form `%s'" buffer-form)
+          (message "Could not generate completion for the form `%s'" buffer-form)
           (progn
             (just-one-space (if (looking-back "\\s(" (1- (point)))
                                 0
