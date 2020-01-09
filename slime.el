@@ -2216,12 +2216,11 @@ Debugged requests are ignored."
              (slime--recompute-modelines)))
           ((:return value id)
            (let ((rec (assq id (slime-rex-continuations))))
-             (cond (rec (setf (slime-rex-continuations)
-                              (remove rec (slime-rex-continuations)))
-                        (slime--recompute-modelines)
-                        (funcall (cdr rec) value))
-                   (t
-                    (error "Unexpected reply: %S %S" id value)))))
+             (when rec
+               (setf (slime-rex-continuations)
+                     (remove rec (slime-rex-continuations)))
+               (slime--recompute-modelines)
+               (funcall (cdr rec) value))))
           ((:debug-activate thread level &optional select)
            (cl-assert thread)
            (sldb-activate thread level select))
