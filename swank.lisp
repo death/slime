@@ -1765,6 +1765,10 @@ Errors are trapped and invoke our debugger."
         (list (get-output-stream-string s)
               (format nil "~{~S~^~%~}" values))))))
 
+(defvar *read-function* 'read)
+
+(defvar *eval-function* 'eval)
+
 (defun eval-region (string)
   "Evaluate STRING.
 Return the results of the last form as a list and as secondary value the
@@ -1772,12 +1776,12 @@ last form."
   (with-input-from-string (stream string)
     (let (- values)
       (loop
-       (let ((form (read stream nil stream)))
+       (let ((form (funcall *read-function* stream nil stream)))
          (when (eq form stream)
            (finish-output)
            (return (values values -)))
          (setq - form)
-         (setq values (multiple-value-list (eval form)))
+         (setq values (multiple-value-list (funcall *eval-function* form)))
          (finish-output))))))
 
 (defslimefun interactive-eval-region (string)
