@@ -1259,7 +1259,8 @@ stack."
         ;; The initial form is utterly uninteresting -- and almost
         ;; certainly right there in the REPL.
         (make-error-location "Stepping...")
-        (make-location `(:source-form ,source) '(:position 1)))))
+        (make-location (list :source-form source)
+                       (list :position (or (search "#:***HERE***" source) 1))))))
 
 (defun emacs-buffer-source-location (code-location plist)
   (if (code-location-has-debug-block-info-p code-location)
