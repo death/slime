@@ -36,7 +36,8 @@
                               (list (list :data data :type (string-downcase type))))
                              (t
                               (error "Can't build :write-image event.")))
-                       (or string " "))))
+                       (or string " ")))
+  (values))
 
 (export 'insert-image)
 
