@@ -1734,6 +1734,8 @@ Cause subsequent clauses to be indented.")
              (cond        (&rest (&whole 2 &rest nil)))
              ;; for DEFSTRUCT
              (:constructor (4 &lambda))
+             (decf        (&rest nil))
+             (incf        (&rest nil))
              (defvar      (4 2 2))
              (defclass    (6 (&whole 4 &rest 1)
                              (&whole 2 &rest 1)
