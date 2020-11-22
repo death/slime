@@ -7,8 +7,8 @@
 ;;; Fontify WITH-FOO, DO-FOO, and DEFINE-FOO like standard macros.
 ;;; Fontify CHECK-FOO like CHECK-TYPE.
 (defvar slime-additional-font-lock-keywords
- '(("(\\(\\(\\s_\\|\\w\\)*:\\(define-\\|do-\\|with-\\|without-\\)\\(\\s_\\|\\w\\)*\\)" 1 font-lock-keyword-face)
-   ("(\\(\\(define-\\|do-\\|with-\\)\\(\\s_\\|\\w\\)*\\)" 1 font-lock-keyword-face)
+ '(("(\\(\\(\\s_\\|\\w\\)*:\\(def\\|do-\\|with-\\|without-\\)\\(\\s_\\|\\w\\)*\\)" 1 font-lock-keyword-face)
+   ("(\\(\\(def\\|do-\\|with-\\)\\(\\s_\\|\\w\\)*\\)" 1 font-lock-keyword-face)
    ("(\\(check-\\(\\s_\\|\\w\\)*\\)" 1 font-lock-warning-face)
    ("(\\(assert-\\(\\s_\\|\\w\\)*\\)" 1 font-lock-warning-face)))
 
