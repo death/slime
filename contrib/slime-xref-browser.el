@@ -20,11 +20,11 @@
 (defun slime-browse-classes (name)
   "Read the name of a class and show its subclasses."
   (interactive (list (slime-read-symbol-name "Class Name: ")))
-  (slime-call-with-browser-setup 
+  (slime-call-with-browser-setup
    (slime-buffer-name :browser) (slime-current-package) "Class Browser"
    (lambda ()
-     (widget-create 'tree-widget :tag name 
-                    :expander 'slime-expand-class-node 
+     (widget-create 'tree-widget :tag name
+                    :expander 'slime-expand-class-node
                     :has-echildren t))))
 
 (defvar slime-browser-map nil
@@ -54,20 +54,22 @@
 
 (defun slime-fetch-browsable-xrefs (type name)
   "Return a list ((LABEL DSPEC)).
-LABEL is just a string for display purposes. 
+LABEL is just a string for display purposes.
 DSPEC can be used to expand the node."
   (let ((xrefs '()))
-    (cl-loop for (_file . specs) in (slime-eval `(swank:xref ,type ,name)) do
-             (cl-loop for (dspec . _location) in specs do
-                      (let ((exp (ignore-errors (read (downcase dspec)))))
-                        (cond ((and (consp exp) (eq 'flet (car exp)))
-                               ;; we can't expand FLET references so they're useless
-                               )
-                              ((and (consp exp) (eq 'method (car exp)))
-                               ;; this isn't quite right, but good enough for now
-                               (push (list dspec (string (cl-second exp))) xrefs))
-                              (t
-                               (push (list dspec dspec) xrefs))))))
+    (cl-loop for (dspec . _location) in (slime-eval `(swank:xref ,type ,name)) do
+             (let ((exp (ignore-errors (read (downcase dspec)))))
+               (cond ((and (consp exp) (eq 'flet (car exp)))
+                      ;; we can't expand FLET references so they're useless
+                      )
+                     ((and (consp exp) (eq 'lambda (car exp)))
+                      ;; we can't expand LAMBDA references so they're useless
+                      )
+                     ((and (consp exp) (eq 'defmethod (car exp)))
+                      ;; this isn't quite right, but good enough for now
+                      (push (list dspec (prin1-to-string (cl-second exp))) xrefs))
+                     (t
+                      (push (list dspec dspec) xrefs)))))
     xrefs))
 
 (defun slime-expand-xrefs (widget)
@@ -84,16 +86,16 @@ DSPEC can be used to expand the node."
 
 (defun slime-browse-xrefs (name type)
   "Show the xref graph of a function in a tree widget."
-  (interactive 
+  (interactive
    (list (slime-read-from-minibuffer "Name: "
                                      (slime-symbol-at-point))
          (read (completing-read "Type: " (slime-bogus-completion-alist
                                           '(":callers" ":callees" ":calls"))
                                 nil t ":"))))
-  (slime-call-with-browser-setup 
+  (slime-call-with-browser-setup
    (slime-buffer-name :xref) (slime-current-package) "Xref Browser"
    (lambda ()
-     (widget-create 'tree-widget :tag name :xref-type type :xref-dspec name 
+     (widget-create 'tree-widget :tag name :xref-type type :xref-dspec name
                     :expander 'slime-expand-xrefs :has-echildren t))))
 
 (provide 'slime-xref-browser)
