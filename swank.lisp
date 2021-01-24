@@ -3670,8 +3670,7 @@ belonging to PACKAGE."
                (when indent
                  (unless (equal (gethash symbol cache) indent)
                    (setf (gethash symbol cache) indent)
-                   (let ((pkgs (mapcar #'package-name
-                                       (symbol-packages symbol)))
+                   (let ((pkgs (symbol-package-names symbol))
                          (name (string-downcase symbol)))
                      (push (list name indent pkgs) alist)))))))
       (cond (force
@@ -3688,12 +3687,12 @@ belonging to PACKAGE."
   "Return the name and all nicknames of PACKAGE in a fresh list."
   (cons (package-name package) (copy-list (package-nicknames package))))
 
-(defun symbol-packages (symbol)
-  "Return the  packages where SYMBOL can be found."
+(defun symbol-package-names (symbol)
+  "Return the names of packages where SYMBOL can be found."
   (let ((string (string symbol)))
     (loop for p in (list-all-packages)
           when (eq symbol (find-symbol string p))
-          collect p)))
+          append (package-names p))))
 
 (defun cl-symbol-p (symbol)
   "Is SYMBOL a symbol in the COMMON-LISP package?"
