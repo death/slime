@@ -64,6 +64,7 @@
       (error "Slime requires an Emacs version of 23, or above")))
 
 (require 'hyperspec "lib/hyperspec")
+(require 'clos-mop-html "lib/clos-mop-html")
 (require 'thingatpt)
 (require 'comint)
 (require 'pp)
@@ -624,6 +625,7 @@ edit s-exprs, e.g. for source buffers and the REPL.")
     (?d slime-describe-symbol)
     (?f slime-describe-function)
     (?h slime-documentation-lookup)
+    (?m slime-mop-lookup)
     (?~ common-lisp-hyperspec-format)
     (?g common-lisp-hyperspec-glossary-term)
     (?# common-lisp-hyperspec-lookup-reader-macro)))
@@ -4363,6 +4365,12 @@ If PACKAGE is NIL, then search in all packages."
   (interactive (list (common-lisp-hyperspec-read-symbol-name
                       (slime-symbol-at-point))))
   (hyperspec-lookup symbol-name))
+
+(defun slime-mop-lookup (symbol-name)
+  "A wrapper for `clos-mop-html'."
+  (interactive (list (clos-mop-html-read-symbol-name
+                      (slime-symbol-at-point))))
+  (clos-mop-html symbol-name))
 
 (defun slime-describe-symbol (symbol-name)
   "Describe the symbol at point."
