@@ -1982,10 +1982,13 @@ WHAT can be:
               `(:filename ,(canonicalize-filename (car what)) ,@(cdr what)))
              ((or symbol cons)
               `(:function-name ,(prin1-to-string what))))))
-      (cond (*emacs-connection* (send-oob-to-emacs `(:ed ,target)))
+      (cond (*emacs-connection*
+             (send-oob-to-emacs `(:ed ,target))
+             t)
             ((default-connection)
              (with-connection ((default-connection))
-               (send-oob-to-emacs `(:ed ,target))))
+               (send-oob-to-emacs `(:ed ,target))
+               t))
             (t (error "No connection"))))))
 
 (defslimefun inspect-in-emacs (what &key wait)
