@@ -208,7 +208,8 @@ strings to line up below the current point."
   "Find start of `presentation' at `point' in `object'.
 Return buffer index and whether a start-tag was found."
   (let* ((this-presentation (get-text-property point presentation object)))
-    (while (not (slime-presentation-start-p this-presentation))
+    (while (and (> point (point-min))
+                (not (slime-presentation-start-p this-presentation)))
       (let ((change-point (previous-single-property-change
                            point presentation object (point-min))))
         (unless change-point
