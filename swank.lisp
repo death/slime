@@ -3235,20 +3235,25 @@ DSPEC is a string and LOCATION a source location. NAME is a string."
 (defun prepare-part (part istate)
   (let ((newline '#.(string #\newline)))
     (etypecase part
+      (null (list))
       (string (list part))
-      (cons (dcase part
-              ((:newline) (list newline))
-              ((:value obj &optional str)
-               (list (value-part obj str (istate.parts istate))))
-              ((:label &rest strs)
-               (list (list :label (apply #'cat (mapcar #'string strs)))))
-              ((:action label lambda &key (refreshp t))
-               (list (action-part label lambda refreshp
-                                  (istate.actions istate))))
-              ((:line label value)
-               (list (princ-to-string label) ": "
-                     (value-part value nil (istate.parts istate))
-                     newline)))))))
+      (cons
+       (dcase part
+         ((:newline) (list newline))
+         ((:value obj &optional str)
+          (list (value-part obj str (istate.parts istate))))
+         ((:label &rest strs)
+          (list (list :label (apply #'cat (mapcar #'string strs)))))
+         ((:action label lambda &key (refreshp t))
+          (list (action-part label lambda refreshp
+                             (istate.actions istate))))
+         ((:line label value)
+          (list (princ-to-string label) ": "
+                (value-part value nil (istate.parts istate))
+                newline))
+         (t
+          (append (prepare-part (car part) istate)
+                  (prepare-part (cdr part) istate))))))))
 
 (defun value-part (object string parts)
   (list :value
@@ -3273,9 +3278,19 @@ DSPEC is a string and LOCATION a source location. NAME is a string."
 
 (defun content-range (list start end)
   (typecase list
-    (list (let ((len (length list)))
-            (subseq list start (min len end))))
-    (lcons (llist-range list start end))))
+    (list
+     (if (or (>= start end) (null list))
+         '()
+         (if (zerop start)
+             (cons (first list)
+                   (content-range (rest list)
+                                  0
+                                  (1- end)))
+             (content-range (rest list)
+                            (1- start)
+                            (1- end)))))
+    (lcons
+     (llist-range list start end))))
 
 (defslimefun inspector-nth-part (index)
   "Return the current inspector's INDEXth part.
@@ -3413,10 +3428,12 @@ Return nil if there's no previous object."
              (frob "An improper list:" list))))))
 
 (defun inspect-list-aux (list)
-  (loop for i from 0  for rest on list  while (consp rest)  append
-        (if (listp (cdr rest))
-            (label-value-line i (car rest))
-            (label-value-line* (i (car rest)) (:tail (cdr rest))))))
+  (labels ((rec (i more)
+             (if (null more)
+                 '()
+                 (lcons (label-value-line i (first more))
+                        (rec (1+ i) (rest more))))))
+    (rec 0 list)))
 
 (defun safe-length (list)
   "Similar to `list-length', but avoid errors on improper lists.
