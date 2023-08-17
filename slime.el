@@ -6358,7 +6358,7 @@ was called originally."
       (when (time-less-p end (current-time))
         (message "Quit timeout expired.  Disconnecting.")
         (delete-process connection))
-      (sit-for 0 100)))
+      (sit-for 0.100)))
   (slime-update-connection-list))
 
 (defun slime-restart-connection-at-point (connection)
