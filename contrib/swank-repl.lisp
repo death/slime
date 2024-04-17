@@ -63,6 +63,8 @@
 
    defslimefun
 
+   *indicate-no-values*
+
    ;; FIXME: those should be exported from swank-repl only, but how to
    ;; do that whithout breaking init files?
    *globally-redirect-io*))
@@ -261,7 +263,7 @@ LISTENER-EVAL directly, so that spacial variables *, etc are set."
 
 (defun send-repl-results-to-emacs (values)
   (really-finish-output *standard-output*)
-  (if (null values)
+  (if (and (null values) *indicate-no-values*)
       (send-to-emacs `(:write-string "; No value" :repl-result))
       (dolist (v values)
         (send-to-emacs `(:write-string ,(cat (prin1-to-string v) #\newline)
