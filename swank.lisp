@@ -1239,6 +1239,10 @@ event was found."
                      (simple-repl))))))))
     (close-connection connection nil (safe-backtrace))))
 
+(defvar *indicate-no-values* t
+  "Non-nil means to indicate to the user that no values were
+returned.")
+
 ;; this is signalled when our custom stream thinks the end-of-file is reached.
 ;; (not when the end-of-file on the socket is reached)
 (define-condition end-of-repl-input (end-of-file) ())
@@ -1254,7 +1258,8 @@ event was found."
         (setq *** **  ** *  * (car values)
               /// //  // /  / values
               +++ ++  ++ +  + form)
-        (cond ((null values) (format t "; No values~&"))
+        (cond ((and (null values) *indicate-no-values*)
+               (format t "; No values~&"))
               (t (mapc (lambda (v) (format t "~s~&" v)) values)))))))
 
 (defun make-repl-input-stream (connection stdin)

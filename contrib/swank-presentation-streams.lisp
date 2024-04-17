@@ -214,7 +214,7 @@ says that I am starting to print an object with this id. The second says I am fi
 	       (prin1 value repl-results))
 	     (terpri repl-results)))
       (if (null values)
-	  (progn 
+	  (when *indicate-no-values*
 	    (princ "; No value" repl-results)
 	    (terpri repl-results))
 	  (mapc #'send values)))
